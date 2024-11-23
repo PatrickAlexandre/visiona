@@ -1,0 +1,13 @@
+#leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+#leaderboard th, #leaderboard td {
+    padding: 10px;
+    border: 1px solid #fff;
+    text-align: center;
+}
+#leaderboard th {
+    background: #444;
+}

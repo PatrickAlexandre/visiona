@@ -10,9 +10,7 @@ let playerProfile = {
 
 let playerScore = 0;
 let leaderboard = [
-    { name: "Alice", score: 200 },
-    { name: "Bob", score: 150 },
-    { name: "Charlie", score: 100 },
+import Contacts.csv
 ];
 
 // Charger les données initiales
@@ -52,7 +50,6 @@ function playGame() {
     const points = Math.floor(Math.random() * 50) + 10;
     playerScore += points;
     alert(`Bravo ! Vous avez gagné ${points} points.`);
-    updateLeaderboard();
 }
 
 // Initialiser le graphique

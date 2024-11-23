@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interface Immersive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #240046, #3f37c9, #00bbf9, #90e0ef);
+      color: #fff;
+      text-align: center;
+    }
+    h1, h2 {
+      font-family: 'Orbitron', sans-serif;
+      margin: 20px 0;
+    }
+    section {
+      display: none;
+      padding: 20px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    section.active {
+      display: block;
+    }
+    form label {
+      display: block;
+      margin: 10px 0;
+    }
+    input, select, button, output {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      width: 80%;
+    }
+    button {
+      background-color: #3f37c9;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00bbf9;
+    }
+    #menu {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    #menu button {
+      background: none;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      cursor: pointer;
+    }
+    output {
+      display: block;
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    ol {
+      text-align: left;
+      margin: 0 auto;
+      padding: 0;
+      max-width: 400px;
+    }
+    ol li {
+      margin: 10px 0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .dark-mode {
+      background: linear-gradient(135deg, #000000, #1f1f1f);
+      color: #90e0ef;
+    }
+  </style>
+</head>
+<body>
+  <nav id="menu">
+    <button onclick="showScreen('health')">Santé</button>
+    <button onclick="showScreen('finances')">Finances</button>
+    <button onclick="showScreen('routine')">Routine</button>
+    <button id="theme-toggle">Mode Nuit</button>
+  </nav>
+
+  <!-- Section Santé -->
+  <section id="health" class="active">
+    <h1>Calculateur de Dépense Énergétique Journalière</h1>
+    <form id="health-form">
+      <label>Poids (kg) : <input type="number" id="weight" placeholder="70" required></label>
+      <label>Taille (cm) : <input type="number" id="height" placeholder="175" required></label>
+      <label>Âge : <input type="number" id="age" placeholder="30" required></label>
+      <label>Niveau d'activité :
+        <select id="activity-level">
+          <option value="1.2">Sédentaire</option>
+          <option value="1.375">Léger</option>
+          <option value="1.55">Modéré</option>
+          <option value="1.725">Intense</option>
+          <option value="1.9">Très intense</option>
+        </select>
+      </label>
+      <button type="button" id="calculate-health">Calculer</button>
+    </form>
+    <output id="dej-result">Votre DEJ s'affichera ici.</output>
+  </section>
+
+  <!-- Section Finances -->
+  <section id="finances">
+    <h1>Analyse Financière</h1>
+    <form id="finance-form">
+      <label>Revenus mensuels (€) : <input type="number" id="income" placeholder="5000" required></label>
+      <label>Dépenses mensuelles (€) : <input type="number" id="expenses" placeholder="3000" required></label>
+      <label>Taux d'épargne (%) :
+        <input type="range" id="savings-rate" min="0" max="50" step="1" value="20" oninput="updateSavingsLabel(this.value)">
+        <span id="savings-label">20%</span>
+      </label>
+      <button type="button" id="calculate-finances">Analyser</button>
+    </form>
+    <output id="finance-result">Résultat de votre analyse financière.</output>
+  </section>
+
+  <!-- Section Routine Matinale -->
+  <section id="routine">
+    <h1>Routine Matinale</h1>
+    <ol>
+      <li>Réveil immédiat (sans snooze).</li>
+      <li>Méditation (5 minutes pour la clarté mentale).</li>
+      <li>Exercice rapide (5 minutes de cardio léger).</li>
+      <li>Douche froide pour stimuler votre énergie.</li>
+      <li>Petit-déjeuner équilibré (focus protéines et fibres).</li>
+      <li>Fixer 3 objectifs pour la journée.</li>
+    </ol>
+  </section>
+
+  <script>
+    // Fonction pour afficher la section active
+    function showScreen(id) {
+      document.querySelectorAll('section').forEach(section => section.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // Calcul de la DEJ
+    document.getElementById('calculate-health').addEventListener('click', () => {
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const age = parseInt(document.getElementById('age').value);
+      const activity = parseFloat(document.getElementById('activity-level').value);
+
+      const dej = Math.round((10 * weight) + (6.25 * height) - (5 * age) + 5) * activity;
+      document.getElementById('dej-result').textContent = `Votre DEJ est ${dej} kcal.`;
+    });
+
+    // Mise à jour de l'étiquette du taux d'épargne
+    function updateSavingsLabel(value) {
+      document.getElementById('savings-label').textContent = `${value}%`;
+    }
+
+    // Calcul des finances
+    document.getElementById('calculate-finances').addEventListener('click', () => {
+      const income = parseFloat(document.getElementById('income').value);
+      const expenses = parseFloat(document.getElementById('expenses').value);
+      const savingsRate = parseInt(document.getElementById('savings-rate').value);
+
+      const savings = income * (savingsRate / 100) - expenses;
+      const message = savings > 0
+        ? `Bravo ! Vous épargnez ${savings}€ ce mois-ci.`
+        : `Attention, vous avez un déficit de ${-savings}€.`;
+      document.getElementById('finance-result').textContent = message;
+    });
+
+    // Mode nuit
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+  </script>
+</body>
+</html>

@@ -10,7 +10,9 @@ let playerProfile = {
 
 let playerScore = 0;
 let leaderboard = [
-import Contacts.csv
+    { name: "Alice", score: 200 },
+    { name: "Bob", score: 150 },
+    { name: "Charlie", score: 100 },
 ];
 
 // Charger les données initiales
@@ -35,21 +37,12 @@ function saveProfile() {
     alert("Votre profil a été mis à jour !");
 }
 
-// Mettre à jour le leaderboard
-function updateLeaderboard() {
-    leaderboard.push({ name: playerProfile.pseudo, score: playerScore });
-    leaderboard.sort((a, b) => b.score - a.score);
-    const leaderboardList = document.getElementById("leaderboard-list");
-    leaderboardList.innerHTML = leaderboard
-        .map((player, index) => `<tr><td>${index + 1}</td><td>${player.name}</td><td>${player.score}</td></tr>`)
-        .join("");
-}
-
 // Jouer pour gagner des points
 function playGame() {
     const points = Math.floor(Math.random() * 50) + 10;
     playerScore += points;
     alert(`Bravo ! Vous avez gagné ${points} points.`);
+    updateLeaderboard();
 }
 
 // Initialiser le graphique
@@ -75,6 +68,56 @@ function showScreen(screenId) {
 
 function backToMenu() {
     document.querySelectorAll(".section").forEach((section) => section.classList.remove("active"));
+}
+
+// Mettre à jour le classement
+function updateLeaderboard() {
+    // Trier les joueurs par score décroissant
+    leaderboard.sort((a, b) => b.score - a.score);
+
+    // Remplir le tableau
+    const leaderboardList = document.getElementById("leaderboard-list");
+    leaderboardList.innerHTML = ""; // Réinitialiser les lignes
+    leaderboard.forEach((player, index) => {
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${player.name}</td>
+                <td>${player.score}</td>
+            </tr>
+        `;
+        leaderboardList.innerHTML += row;
+    });
+
+    // Initialiser ou recharger DataTables
+    if ($.fn.DataTable.isDataTable("#leaderboard-table")) {
+        $('#leaderboard-table').DataTable().destroy();
+    }
+    $('#leaderboard-table').DataTable({
+        pageLength: 5, // Nombre de lignes par page
+        lengthMenu: [5, 10, 20], // Options pour les lignes par page
+        order: [[2, 'desc']], // Trier par score décroissant
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.5/i18n/fr-FR.json" // Traduction en français
+        }
+    });
+}
+
+function playGame() {
+    const points = Math.floor(Math.random() * 50) + 10;
+    playerScore += points;
+
+    alert(`Bravo ! Vous avez gagné ${points} points.`);
+
+    // Ajouter ou mettre à jour le score du joueur
+    const existingPlayer = leaderboard.find(player => player.name === playerProfile.pseudo);
+    if (existingPlayer) {
+        existingPlayer.score = playerScore;
+    } else {
+        leaderboard.push({ name: playerProfile.pseudo, score: playerScore });
+    }
+
+    updateLeaderboard();
 }
 
 // Initialisation
